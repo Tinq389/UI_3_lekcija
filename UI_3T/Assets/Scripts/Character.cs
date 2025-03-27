@@ -5,9 +5,13 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     public int health;
-
     [SerializeField] private Weapon weapon;
+    private Shield shield;
 
+    private void Start()
+    {
+        shield = GetComponent<Shield>();
+    }
     public Weapon Weapon
     {
         get { return weapon; }
@@ -20,34 +24,29 @@ public class Character : MonoBehaviour
 
     public void GetHit(int damage)
     {
-        Debug.Log(name + " starting health: " + health);
+        if (shield != null && shield.IsActive)
+        {
+            int blockedAmount = shield.BlockDamage(damage);
+            Debug.Log($"Shield is ON! Blocked {damage - blockedAmount} damage.");
+            damage = blockedAmount;
+        }
+        else
+        {
+            Debug.Log("Shield is OFF! Taking full damage.");
+        }
+
         health -= damage;
-        health = Mathf.Max(health, 0); // Ensure health doesn't go below 0
-        Debug.Log(name + " health after hit: " + health);
+        health = Mathf.Max(health, 0); // prevent negative health
+        Debug.Log($"{name} took {damage} damage! Current Health: {health}");
 
         if (health == 0)
         {
             Die();
         }
     }
-
-    public void GetHit(Weapon weapon)
-    {
-        Debug.Log(name + " starting health: " + health);
-        health -= weapon.GetDamage();
-        health = Mathf.Max(health, 0); // Ensure health doesn't go below 0
-        Debug.Log(name + " health after hit by: " + weapon.name + " : " + health);
-
-        if (health == 0)
-        {
-            Die();
-        }
-    }
-
-    // Virtual method for character death (now can be overridden)
     protected virtual void Die()
     {
         Debug.Log(name + " has been defeated.");
-        gameObject.SetActive(false); // Disable instead of destroying
+        gameObject.SetActive(false);
     }
 }

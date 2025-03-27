@@ -21,7 +21,7 @@ public class Enemy : Character
 
     public override int Attack()
     {
-        return 10; // Example attack value
+        return 10;
     }
 
     public virtual void Die()
@@ -29,9 +29,9 @@ public class Enemy : Character
         Debug.Log(name + " has been defeated.");
         if (GetComponent<Enemy>()?.EnemyImage != null)
         {
-            GetComponent<Enemy>().EnemyImage.gameObject.SetActive(false); // Hide enemy image
+            GetComponent<Enemy>().EnemyImage.gameObject.SetActive(false);
         }
-        gameObject.SetActive(false); // Disable enemy object
+        gameObject.SetActive(false);
     }
 
 }

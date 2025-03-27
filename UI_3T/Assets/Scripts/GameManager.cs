@@ -12,19 +12,17 @@ public class GameManager : MonoBehaviour
    private int currentEnemyIndex = 0;
    private Enemy enemy;
    [SerializeField] private TMP_Text playerName, playerHealth, enemyName, enemyHealth;
-   [SerializeField] private GameObject gameOverUI; // Game Over UI to enable when player dies
-   [SerializeField] private Button restartButton; // Restart button to restart the scene
-   [SerializeField] private GameObject[] uiElementsToDisable; // 5 UI GameObjects to disable
+   [SerializeField] private GameObject gameOverUI;
+   [SerializeField] private Button restartButton; 
+   [SerializeField] private GameObject[] uiElementsToDisable;
 
    void Start()
    {
        playerName.text = player.CharName;
        ActivateEnemy(0);
        UpdateHealth();
-
-       // Ensure restart button is initially disabled
        restartButton.gameObject.SetActive(false);
-       restartButton.onClick.AddListener(RestartGame); // Set listener for restart button
+       restartButton.onClick.AddListener(RestartGame); // listener for restart button
    }
 
    private void UpdateHealth()
@@ -35,17 +33,15 @@ public class GameManager : MonoBehaviour
 
    public void DoRound()
    {
-       enemy.GetHit(player.Weapon);
+       enemy.GetHit(player.Weapon.GetDamage());
        player.Weapon.ApplyEffect(enemy);
-
-       // Check if enemy is dead
+       
        if (enemy.health <= 0)
        {
            RespawnEnemy();
        }
        else
        {
-           // Enemy attacks player
            int enemyDamage = enemy.Attack();
            player.GetHit(enemyDamage);
            enemy.Weapon.ApplyEffect(player);
@@ -58,19 +54,18 @@ public class GameManager : MonoBehaviour
 
        UpdateHealth();
    }
-
    public void RespawnEnemy()
    {
-       currentEnemyIndex++; // Move to the next enemy
+       currentEnemyIndex++;
 
        if (currentEnemyIndex >= enemies.Length)
        {
            Debug.Log("All enemies defeated! Showing Game Over screen.");
-           GameOver(); // End game when all enemies are defeated
+           GameOver();
        }
        else
        {
-           ActivateEnemy(currentEnemyIndex); // Activate the next enemy
+           ActivateEnemy(currentEnemyIndex);
        }
 
        UpdateHealth();
@@ -80,25 +75,22 @@ public class GameManager : MonoBehaviour
    {
        if (enemy != null)
        {
-           enemy.gameObject.SetActive(false); // Disable previous enemy
+           enemy.gameObject.SetActive(false);
            if (enemy.EnemyImage != null)
            {
-               enemy.EnemyImage.gameObject.SetActive(false); // Hide previous enemy's image
+               enemy.EnemyImage.gameObject.SetActive(false);
            }
        }
 
-       enemy = enemies[index]; // Set new enemy
-       enemy.gameObject.SetActive(true); // Activate new enemy
-
-       // Update the UI with the new enemy's name and image
+       enemy = enemies[index]; // set new enemy
+       enemy.gameObject.SetActive(true);
        UpdateEnemyVisual();
    }
 
    private void UpdateEnemyVisual()
    {
-       enemyName.text = enemy.name; // Update the enemy name on UI
-
-       // Display the enemy's image if it's assigned
+       enemyName.text = enemy.name; 
+       
        if (enemy.EnemyImage != null)
            enemy.EnemyImage.gameObject.SetActive(true);
    }
@@ -106,19 +98,18 @@ public class GameManager : MonoBehaviour
    public void GameOver()
    {
        Debug.Log("Game Over! Player has died.");
-       gameOverUI.SetActive(true); // Show the Game Over screen
-       restartButton.gameObject.SetActive(true); // Show the restart button
+       gameOverUI.SetActive(true);
+       restartButton.gameObject.SetActive(true);
 
-       // Disable the 5 UI elements that were assigned in the Inspector
+       // disable unecessary UI elements
        foreach (GameObject uiElement in uiElementsToDisable)
        {
-           uiElement.SetActive(false); // Disable each UI GameObject
+           uiElement.SetActive(false);
        }
    }
-
    public void RestartGame()
    {
        Debug.Log("Restarting Game...");
-       SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reload the current scene
+       SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
    }
 }

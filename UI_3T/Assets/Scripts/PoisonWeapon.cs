@@ -11,3 +11,4 @@ public class PoisonWeapon : Weapon
         target.GetHit(poisonStrength);
     }
 }
+
